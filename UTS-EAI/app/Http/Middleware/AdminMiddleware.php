@@ -14,6 +14,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return redirect()->route('login')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        return redirect()->route('login')->with('error', 'Unauthorized access. Admin privileges required.');
     }
 } 

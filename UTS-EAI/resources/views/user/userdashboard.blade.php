@@ -55,7 +55,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Beranda</a>
+                        <a class="nav-link active" href="{{ route('user.dashboard') }}">Beranda</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Produk</a>
@@ -71,13 +71,18 @@
                     </a>
                     <div class="dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            {{ Auth::user()->name }}
+                            {{ $user->name }}
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">Profil</a></li>
                             <li><a class="dropdown-item" href="#">Pesanan Saya</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ route('logout') }}">Logout</a></li>
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">Logout</button>
+                                </form>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -97,50 +102,19 @@
 
         <h2 class="mb-4">Produk Terbaru</h2>
         <div class="row">
+            @foreach($latestProducts as $product)
             <div class="col-md-3 mb-4">
                 <div class="card product-card">
-                    <span class="badge bg-primary category-badge">Kemeja</span>
-                    <img src="https://via.placeholder.com/300x200" class="card-img-top product-image" alt="...">
+                    <span class="badge bg-primary category-badge">{{ $product->category }}</span>
+                    <img src="{{ $product->image }}" class="card-img-top product-image" alt="{{ $product->name }}">
                     <div class="card-body">
-                        <h5 class="card-title">Kemeja Flanel</h5>
-                        <p class="card-text text-muted">Rp 250.000</p>
+                        <h5 class="card-title">{{ $product->name }}</h5>
+                        <p class="card-text text-muted">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
                         <button class="btn btn-primary w-100">Tambah ke Keranjang</button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-4">
-                <div class="card product-card">
-                    <span class="badge bg-success category-badge">Celana</span>
-                    <img src="https://via.placeholder.com/300x200" class="card-img-top product-image" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Celana Jeans</h5>
-                        <p class="card-text text-muted">Rp 350.000</p>
-                        <button class="btn btn-primary w-100">Tambah ke Keranjang</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="card product-card">
-                    <span class="badge bg-warning category-badge">Jaket</span>
-                    <img src="https://via.placeholder.com/300x200" class="card-img-top product-image" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Jaket Hoodie</h5>
-                        <p class="card-text text-muted">Rp 450.000</p>
-                        <button class="btn btn-primary w-100">Tambah ke Keranjang</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="card product-card">
-                    <span class="badge bg-info category-badge">T-Shirt</span>
-                    <img src="https://via.placeholder.com/300x200" class="card-img-top product-image" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">T-Shirt Basic</h5>
-                        <p class="card-text text-muted">Rp 150.000</p>
-                        <button class="btn btn-primary w-100">Tambah ke Keranjang</button>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
 
         <h2 class="mb-4">Pesanan Terakhir</h2>
@@ -157,18 +131,18 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach($recentOrders as $order)
                             <tr>
-                                <td>#12345</td>
-                                <td>19 April 2024</td>
-                                <td>Rp 500.000</td>
-                                <td><span class="badge bg-success">Selesai</span></td>
+                                <td>#{{ $order->id }}</td>
+                                <td>{{ $order->created_at->format('d F Y') }}</td>
+                                <td>Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                                <td>
+                                    <span class="badge bg-{{ $order->status === 'completed' ? 'success' : 'warning' }}">
+                                        {{ $order->status === 'completed' ? 'Selesai' : 'Proses' }}
+                                    </span>
+                                </td>
                             </tr>
-                            <tr>
-                                <td>#12346</td>
-                                <td>18 April 2024</td>
-                                <td>Rp 750.000</td>
-                                <td><span class="badge bg-warning">Proses</span></td>
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

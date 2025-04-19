@@ -31,9 +31,9 @@ class AuthController extends Controller
             $user = Auth::user();
             
             if ($user->role === 'admin') {
-                return redirect()->intended(route('admin.dashboard'));
-            } else {
-                return redirect()->intended(route('user.dashboard'));
+                return redirect()->route('admin.dashboard');
+            } elseif ($user->role === 'user') {
+                return redirect()->route('user.dashboard');
             }
         }
 
@@ -55,7 +55,7 @@ class AuthController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role' => 'user',
+                'role' => 'user', // Default role is user
             ]);
 
             Auth::login($user);
